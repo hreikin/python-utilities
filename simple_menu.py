@@ -38,11 +38,11 @@ def print_options(options):
         row = f"{index+1}. {sub_dict['title']}"
         print(row)
 
-def main_menu(options):
+def main_menu(options, app_name):
     running = True
     while running:
 
-        print("\nWelcome to the address book app.")
+        print(f"\nWelcome to the {app_name} app.")
         print_options(options)
 
         q = "Type in a number to make a selection: "
