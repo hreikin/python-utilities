@@ -1,30 +1,40 @@
-import os
+import logging
+from pathlib import Path
 
-def clean_up_remove(source_path):
+def delete_all_targets(source_path, targets):
     """
-    Walks through the source path and removes the partial and original 
-    files after conversion.
+    Takes a source directory and a list of files or extensions to delete as 
+    input and then removes all matching items.
     
     :param source_path(str): The location of the files to search through.
+    :param targets(list): Items to delete from the directory.
     """
-    source_path = os.path.realpath(source_path)
-    remove = ["-PARTIAL.html", "-ORIGINAL.html"]
-    for root, dirnames, filenames in os.walk(source_path):
-        for filename in filenames:
-            for item in remove:
-                if filename.endswith(item):
-                    os.remove(f"{root}/{filename}")
+    src = Path(source_path).resolve()
+    all_files = src.rglob("*.*")
+    for file in all_files:
+        for target in targets:
+            if str(file.resolve()).endswith(target):
+                file.resolve().unlink()
+                break
 
-def clean_up_keep(source_path):
+def delete_all_except_targets(source_path, targets=list()):
     """
-    Walks through the source path and removes the partial and original 
-    files after conversion.
+    Takes a source directory and a list of files or extensions to keep as input 
+    and then deletes all other files.
     
     :param source_path(str): The location of the files to search through.
+    :param targets(list): Items to keep from within the directory.
     """
-    source_path = os.path.realpath(source_path)
-    keep = "-PARTIAL.html"
-    for root, dirnames, filenames in os.walk(source_path):
-        for filename in filenames:
-            if not filename.endswith(keep):
-                os.remove(f"{root}/{filename}")
+    src = Path(source_path).resolve()
+    all_files = src.rglob("*.*")
+    for file in all_files:
+        for target in targets:
+            if not str(file.resolve()).endswith(target):
+                file.resolve().unlink()
+                break
+
+src = "test/"
+remove = [".py"]
+keep = ["clean_up.py"]
+# delete_all_targets(src, remove)
+delete_all_except_targets(src, keep)
