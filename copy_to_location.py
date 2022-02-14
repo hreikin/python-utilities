@@ -1,4 +1,5 @@
-import os, glob, shutil
+import shutil
+from pathlib import Path
 
 def copy_to_location(source_path, destination_path, file_extensions=None, overwrite=False):
     """
@@ -10,26 +11,30 @@ def copy_to_location(source_path, destination_path, file_extensions=None, overwr
     :param overwrite(bool): If True all files will be overwritten, otherwise if false skip file.
     :return files_count(int): Count of copied files.
     """
-    source_path = os.path.realpath(source_path)
-    destination_path = os.path.realpath(destination_path)
+    source_path = Path(source_path).resolve()
+    destination_path = Path(destination_path).resolve()
     files_count = 0
-    if not os.path.exists(destination_path):
-        os.mkdir(destination_path)
-    items = glob.glob(source_path + '/*')
+    destination_path.mkdir(parents=True, exist_ok=True)
+    items = source_path.rglob("*")
     for item in items:
-        if os.path.isdir(item):
-            path = os.path.join(destination_path, item.split('/')[-1])
+        if item.is_dir():
+            path = Path(destination_path / item.name)
+            print(path)
             files_count += copy_to_location(source_path=item, destination_path=path, file_extensions=file_extensions, overwrite=overwrite)
         elif file_extensions != None:
             for extension in file_extensions:
-                if item.endswith(extension):
-                    file = os.path.join(destination_path, item.split('/')[-1])
-                    if not os.path.exists(file) or overwrite:
+                if item.name.endswith(extension):
+                    file = Path(destination_path / item.name)
+                    if not file.exists() or overwrite:
                         shutil.copyfile(item, file)
                         files_count += 1
         else:
-            file = os.path.join(destination_path, item.split('/')[-1])
-            if not os.path.exists(file) or overwrite:
+            file = Path(destination_path / item.name)
+            if not file.exists() or overwrite:
                 shutil.copyfile(item, file)
                 files_count += 1
     return files_count
+
+src = "test/test_a/"
+out = "test/test_b/"
+copy_to_location(src, out)
