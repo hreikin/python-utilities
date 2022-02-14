@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 def delete_all_targets(source_path, targets):
@@ -37,4 +36,4 @@ src = "test/"
 remove = [".py"]
 keep = ["clean_up.py"]
 # delete_all_targets(src, remove)
-delete_all_except_targets(src, keep)
+# delete_all_except_targets(src, keep)
