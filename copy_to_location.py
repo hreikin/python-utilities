@@ -38,7 +38,11 @@ def copy_to_location(src_path, dest_path, file_extensions=None, overwrite=False)
 def simple_copy_all(src, dest):
     """
     Simple copy function that copies all files and folders from one directory to 
-    another.
+    another. This DOES NOT overwrite files if they exist at the destination path 
+    already.
+
+    :param src(str): Source directory to copy contents from.
+    :param dest(str): Destination directory to copy contents to.
     """
     src = Path(src).resolve()
     dest = Path(dest).resolve()
